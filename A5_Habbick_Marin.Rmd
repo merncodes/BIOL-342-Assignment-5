@@ -1,0 +1,42 @@
+---
+title: "20105807_A5"
+author: "Marin H"
+date: "2023-02-07"
+output: html_document
+---
+### https://github.com/merncodes
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+### Set-up
+```{r}
+# load dplyr functions 
+library(tidyverse)
+
+# upload previously created limb measurements dataset from github
+MData <- read.csv("https://raw.githubusercontent.com/merncodes/Re-try-Assignment-One/master/measurements_2.csv")
+```
+
+### Use Regex to create Sp column
+```{r}
+# use dplyr and regex to convert to shorted species names
+  # sub() to only select for the first alphanumeric word in the query
+  # capture the first letter in the query: (\\w)
+  # match the rest of the word in the wuery: \\w+
+  # backreference with \\1, replace everything not in the capture group with a period
+MData <- MData %>%
+  mutate(Sp = sub("(\\w)\\w+", "\\1.", MData$species_names))
+
+# Make new dataset; remove organism column (species_names)
+  # use relocate() to put Sp column as the first column
+MData %>%
+  select(-species_names) %>%
+  relocate(Sp, .before = Limb_width)
+```
+### Save updated dataset to a .csv file
+```{r}
+write.csv(MData, "/Users/mh_mac/Documents/CLASSES/BIOL 432/Week 5/BIOL 432 Assignment 5/MeasShort.csv", row.names=F)
+```
+
